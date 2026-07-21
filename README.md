@@ -1,6 +1,6 @@
-# Claude Boilerplate
+# An Agent Orchestrator: Helps you build better
 
-A production-grade Claude Code configuration layer. Drop it into any project and get a structured agent team, automated quality gates, persistent memory across sessions, and enforced coding standards — without writing any of it yourself.
+A Claude Code configuration layer. Drop it into any project and get a structured agent team, automated quality gates, persistent memory across sessions, and enforced coding standards — without writing any of it yourself.
 
 **Stack-agnostic.** Works with any language or framework. Optimized for TypeScript/Node projects out of the box, adaptable to anything via `setup.sh`.
 
