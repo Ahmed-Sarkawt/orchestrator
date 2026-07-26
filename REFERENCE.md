@@ -45,18 +45,20 @@
 
 ## Skills (`.claude/skills/<name>/SKILL.md`)
 
-| Skill                | What                                                                   |
-| -------------------- | ---------------------------------------------------------------------- |
-| `review`             | /review — drain queue: code-reviewer → bug-fixer → test-writer → judge |
-| `research`           | /research — invoke researcher for knowledge gaps                       |
-| `audit-ux`           | /audit-ux — UX + WCAG AA audit of a component, page, or flow           |
-| `workflow`           | /workflow — invoke any named workflow in .claude/workflows/            |
-| `session-log`        | /session-log — analyze session JSONL logs for cost, agents, patterns   |
-| `feedback`           | /feedback — record a correction for a specific agent                   |
-| `init`               | /init — conversational setup/update wizard                             |
-| `agent-team`         | Knowledge: full agent graph, invocation chains, who calls whom         |
-| `laws-of-ux`         | Knowledge: 10 UX laws with application guidance                        |
-| `react-ts-standards` | Knowledge: enforced React + TypeScript patterns                        |
+| Skill                              | What                                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
+| `review`                           | /review — drain queue: code-reviewer → bug-fixer → test-writer → judge               |
+| `research`                         | /research — invoke researcher for knowledge gaps                                     |
+| `audit-ux`                         | /audit-ux — UX + WCAG AA audit of a component, page, or flow                         |
+| `workflow`                         | /workflow — invoke any named workflow in .claude/workflows/                          |
+| `session-log`                      | /session-log — analyze session JSONL logs for cost, agents, patterns                 |
+| `feedback`                         | /feedback — record a correction for a specific agent                                 |
+| `init`                             | /init — conversational setup/update wizard                                           |
+| `agent-team`                       | Knowledge: full agent graph, invocation chains, who calls whom                       |
+| `laws-of-ux`                       | Knowledge: 10 UX laws with application guidance                                      |
+| `react-ts-standards`               | Knowledge: enforced React + TypeScript patterns                                      |
+| `design-taste-frontend`            | Knowledge: anti-slop frontend design for landing/portfolio/marketing (vendored, MIT) |
+| `animation-micro-interaction-pack` | Knowledge: motion presets and micro-interaction patterns (vendored, MIT)             |
 
 ## Hooks (`.claude/hooks/`)
 
