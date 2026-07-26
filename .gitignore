@@ -45,3 +45,7 @@ ehthumbs.db
 *.swp
 *.swo
 *~
+
+# Project-history docs — boilerplate ships the scaffold (index.md), not this repo's own research/decision content
+docs/decisions/2*.md
+docs/research/2*.md
