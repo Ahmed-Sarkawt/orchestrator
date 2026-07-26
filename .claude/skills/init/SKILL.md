@@ -1,6 +1,6 @@
 ---
 name: init
-description: Initialize or update project-specific Claude configuration — covers all 11 setup options conversationally. Works as both first-time setup and an update wizard.
+description: Initialize or update project-specific Claude configuration — covers all 12 setup options conversationally. Works as both first-time setup and an update wizard.
 disable-model-invocation: true
 ---
 
@@ -176,7 +176,30 @@ If **yes**: append `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` to `.env.claude`, ad
 
 ---
 
-## Step 12 — Project-specific rules
+## Step 12 — Docs tracking (research logs)
+
+The boilerplate ships with both `docs/decisions/2*.md` and `docs/research/2*.md` gitignored — that keeps the boilerplate repo's own development history off GitHub. A real project is different: decision records document why the code is the way it is and **must be committed**.
+
+**Always do (no question):** remove the `docs/decisions/2*.md` line from `.gitignore`:
+
+```bash
+(grep -vxF 'docs/decisions/2*.md' .gitignore || true) > .gitignore.tmp && mv .gitignore.tmp .gitignore
+```
+
+**Ask:** "Commit research logs (docs/research/) to git too? Useful for teams; keep them local if research is scratch work. (yes/no — default: no)"
+
+If **yes**: also remove the research ignore line and its comment:
+
+```bash
+(grep -vxF 'docs/research/2*.md' .gitignore || true) > .gitignore.tmp && mv .gitignore.tmp .gitignore
+(grep -vF '# Project-history docs' .gitignore || true) > .gitignore.tmp && mv .gitignore.tmp .gitignore
+```
+
+If **no**: keep the line — research files stay on this machine only, and the hooks/scripts keep working locally.
+
+---
+
+## Step 13 — Project-specific rules
 
 Ask: "Any project-specific hard rules to add to CLAUDE.md? (e.g. 'never use class components', 'all API calls go through src/lib/api.ts' — leave blank to skip)"
 
@@ -184,13 +207,13 @@ If provided: append each rule to the hard rules list in `CLAUDE.md`.
 
 ---
 
-## Step 13 — Make hooks executable
+## Step 14 — Make hooks executable
 
 Run: `chmod +x .claude/hooks/*.sh`
 
 ---
 
-## Step 14 — Summary
+## Step 15 — Summary
 
 Show a clean summary of every setting and what was changed vs kept at default. Then say:
 

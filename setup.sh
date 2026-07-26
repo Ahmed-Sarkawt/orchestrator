@@ -11,7 +11,7 @@
 #     --push-strategy branch --model-tier balanced \
 #     --format-on-save yes --session-logs yes \
 #     --commit-signing no --branch-prefix feat \
-#     --review-sensitivity strict --agent-teams no
+#     --review-sensitivity strict --agent-teams no --research-log no
 #
 # Inspect current config:
 #   bash setup.sh --print-config
@@ -46,6 +46,7 @@ COMMIT_SIGNING=false
 BRANCH_PREFIX=""
 REVIEW_SENSITIVITY="strict"
 AGENT_TEAMS=true
+RESEARCH_LOG=false
 EXTRA_RULES=""
 NON_INTERACTIVE=false
 DRY_RUN=false
@@ -69,6 +70,7 @@ while [[ $# -gt 0 ]]; do
     --branch-prefix)      BRANCH_PREFIX="$2";                                 shift 2 ;;
     --review-sensitivity) REVIEW_SENSITIVITY="$2";                            shift 2 ;;
     --agent-teams)        [[ "$2" == "yes" ]] && AGENT_TEAMS=true;            shift 2 ;;
+    --research-log)       [[ "$2" == "yes" ]] && RESEARCH_LOG=true;           shift 2 ;;
     --extra-rules)        EXTRA_RULES="$2";                                   shift 2 ;;
     --dry-run)            DRY_RUN=true;                                       shift ;;
     --print-config)       PRINT_CONFIG=true;                                  shift ;;
@@ -156,7 +158,8 @@ if [[ "$PRINT_CONFIG" == true ]]; then
     "  --commit-signing   " + (if .commit_signing then "yes" else "no" end),
     "  --branch-prefix    " + (.branch_prefix // ""),
     "  --review-sensitivity " + .review_sensitivity,
-    "  --agent-teams      " + (if .agent_teams then "yes" else "no" end)
+    "  --agent-teams      " + (if .agent_teams then "yes" else "no" end),
+    "  --research-log     " + (if .research_log then "yes" else "no" end)
   ' "$CONFIG_FILE"
   echo ""
   echo -e "${DIM}Setup date: $(jq -r '.setup_date' "$CONFIG_FILE")${RESET}"
@@ -179,6 +182,7 @@ if [[ -f "$CONFIG_FILE" ]] && command -v jq >/dev/null 2>&1; then
   BRANCH_PREFIX=$(jq -r '.branch_prefix // empty'                                     "$CONFIG_FILE")
   REVIEW_SENSITIVITY=$(jq -r --arg d "$REVIEW_SENSITIVITY" '.review_sensitivity // $d' "$CONFIG_FILE")
   AGENT_TEAMS=$(jq -r 'if .agent_teams then "true" else "false" end'                  "$CONFIG_FILE")
+  RESEARCH_LOG=$(jq -r 'if .research_log then "true" else "false" end'                "$CONFIG_FILE")
 fi
 
 # ── Header ─────────────────────────────────────────────────────────────────────
@@ -256,6 +260,13 @@ if [[ "$SETUP_MODE" == "basic" || "$SETUP_MODE" == "advanced" ]]; then
   echo "It is enabled by default via settings.json."
   if [[ "$NON_INTERACTIVE" == false ]] && ! confirm "Keep Agent Teams enabled? (recommended)"; then
     AGENT_TEAMS=false
+  fi
+
+  if [[ "$NON_INTERACTIVE" == false ]]; then
+    section "Docs in git"
+    echo "Decision records (docs/decisions/) are always committed — they document why the code is the way it is."
+    echo "Research logs (docs/research/) can stay local-only if you prefer."
+    if confirm "Also commit research logs to git?"; then RESEARCH_LOG=true; fi
   fi
 fi
 
@@ -511,6 +522,25 @@ if [[ "$AGENT_TEAMS" == true ]]; then
   fi
 fi
 
+# Docs tracking — decisions always committed; research logs opt-in.
+# The boilerplate repo ships with both patterns gitignored (its own dev history
+# stays local); a real project needs its decision records in the repo.
+DOCS_IGNORE_COMMENT="# Project-history docs — boilerplate ships the scaffold (index.md), not this repo's own research/decision content"
+if [[ "$DRY_RUN" == true ]]; then
+  dr "Track docs/decisions/ in git (always)"
+  [[ "$RESEARCH_LOG" == true ]] && dr "Track docs/research/ in git" || dr "Keep docs/research/ local-only (gitignored)"
+elif [[ -f .gitignore ]]; then
+  (grep -vxF 'docs/decisions/2*.md' .gitignore || true) > .gitignore.setup-tmp && mv .gitignore.setup-tmp .gitignore
+  ok "docs/decisions/ tracked in git (always committed)"
+  if [[ "$RESEARCH_LOG" == true ]]; then
+    (grep -vxF 'docs/research/2*.md' .gitignore || true) > .gitignore.setup-tmp && mv .gitignore.setup-tmp .gitignore
+    (grep -vxF "$DOCS_IGNORE_COMMENT" .gitignore || true) > .gitignore.setup-tmp && mv .gitignore.setup-tmp .gitignore
+    ok "docs/research/ tracked in git"
+  else
+    ok "docs/research/ stays local-only (gitignored)"
+  fi
+fi
+
 # Hooks executable + git init + docs
 if [[ "$DRY_RUN" == false ]]; then
   chmod +x .claude/hooks/*.sh
@@ -579,6 +609,7 @@ if [[ "$DRY_RUN" == false ]]; then
     --arg branch_prefix     "$BRANCH_PREFIX" \
     --arg review_sensitivity "$REVIEW_SENSITIVITY" \
     --argjson agent_teams   "$AGENT_TEAMS" \
+    --argjson research_log  "$RESEARCH_LOG" \
     --arg setup_date        "$(date +%Y-%m-%d)" \
     '{
       setup_mode:         $setup_mode,
@@ -596,6 +627,7 @@ if [[ "$DRY_RUN" == false ]]; then
       branch_prefix:      $branch_prefix,
       review_sensitivity: $review_sensitivity,
       agent_teams:        $agent_teams,
+      research_log:       $research_log,
       setup_date:         $setup_date
     }' > "$CONFIG_FILE"
   ok "Saved config to ${CONFIG_FILE}"
@@ -617,6 +649,8 @@ echo -e "Commit signing:   $([ "$COMMIT_SIGNING" = true ] && echo 'enabled' || e
 [[ -n "$BRANCH_PREFIX" ]] && echo -e "Branch prefix:    ${BRANCH_PREFIX}/"
 echo -e "Review:           ${REVIEW_SENSITIVITY}"
 echo -e "Agent Teams:      $([ "$AGENT_TEAMS" = true ] && echo 'enabled' || echo 'disabled')"
+echo -e "Decisions in git: always"
+echo -e "Research in git:  $([ "$RESEARCH_LOG" = true ] && echo 'committed' || echo 'local-only')"
 
 if [[ "$DRY_RUN" == false ]]; then
   echo ""
