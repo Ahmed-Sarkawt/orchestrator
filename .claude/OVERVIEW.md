@@ -55,6 +55,7 @@ You don't need to trigger these — they fire on their own.
 | -------------------- | ------------------------ | --------------------------------------------------------------- |
 | Session opens        | `session-start.sh`       | Branch, recent decisions, recent research injected into context |
 | Any file is saved    | `format-and-test.sh`     | Prettier formats it; sibling test runs                          |
+| Any file is saved    | `security-check.sh`      | OWASP regex scan — warnings injected, fix or justify            |
 | Any file is saved    | `trigger-code-review.sh` | File queued in `.claude/.review-queue.txt`                      |
 | Context window fills | `pre-compact.sh`         | Preserves modified files, failing tests, current task           |
 | Any agent finishes   | `subagent-stop.sh`       | Suggests the logical next step                                  |

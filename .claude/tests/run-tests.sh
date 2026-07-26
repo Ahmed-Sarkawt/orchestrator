@@ -164,6 +164,45 @@ fi
 
 : > "$QUEUE"
 
+# ── security-check.sh ────────────────────────────────────────────────────────
+echo ""
+echo "--- security-check.sh ---"
+SEC_TMP=$(mktemp -d)
+run_sec() { # $1 = file path; prints hook stdout
+  jq -n --arg fp "$1" '{"tool_input":{"file_path":$fp}}' \
+    | bash .claude/hooks/security-check.sh 2>/dev/null
+}
+
+printf 'const q = `SELECT * FROM users WHERE id = ${userId}`;\n' > "$SEC_TMP/sqli.ts"
+OUT=$(run_sec "$SEC_TMP/sqli.ts")
+assert_contains "flags SQL template interpolation" "$OUT" "A03 sqli"
+assert_valid_json "sqli warning is valid JSON" "$OUT"
+
+printf 'const apiKey = "AKIAIOSFODNN7EXAMPLE1";\n' > "$SEC_TMP/secret.ts"
+OUT=$(run_sec "$SEC_TMP/secret.ts")
+assert_contains "flags hardcoded AWS key" "$OUT" "A02 secrets"
+
+printf 'el.innerHTML = userInput;\n' > "$SEC_TMP/xss.ts"
+OUT=$(run_sec "$SEC_TMP/xss.ts")
+assert_contains "flags innerHTML sink" "$OUT" "A03 xss"
+
+printf 'const ids = rows.map((r) => r.id);\nexport default ids;\n' > "$SEC_TMP/clean.ts"
+OUT=$(run_sec "$SEC_TMP/clean.ts")
+if [[ -z "$OUT" ]]; then
+  pass "clean file produces no output"
+else
+  fail "clean file should produce no output, got: $(echo "$OUT" | head -c 80)"
+fi
+
+printf 'password = "supersecretvalue1"\n' > "$SEC_TMP/note.md"
+OUT=$(run_sec "$SEC_TMP/note.md")
+if [[ -z "$OUT" ]]; then
+  pass "skips non-source files (.md)"
+else
+  fail ".md file should be skipped"
+fi
+rm -rf "$SEC_TMP"
+
 # ── prompt-logger.sh ─────────────────────────────────────────────────────────
 echo ""
 echo "--- prompt-logger.sh ---"

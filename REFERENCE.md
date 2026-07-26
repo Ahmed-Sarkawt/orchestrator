@@ -45,20 +45,21 @@
 
 ## Skills (`.claude/skills/<name>/SKILL.md`)
 
-| Skill                              | What                                                                                 |
-| ---------------------------------- | ------------------------------------------------------------------------------------ |
-| `review`                           | /review — drain queue: code-reviewer → bug-fixer → test-writer → judge               |
-| `research`                         | /research — invoke researcher for knowledge gaps                                     |
-| `audit-ux`                         | /audit-ux — UX + WCAG AA audit of a component, page, or flow                         |
-| `workflow`                         | /workflow — invoke any named workflow in .claude/workflows/                          |
-| `session-log`                      | /session-log — analyze session JSONL logs for cost, agents, patterns                 |
-| `feedback`                         | /feedback — record a correction for a specific agent                                 |
-| `init`                             | /init — conversational setup/update wizard                                           |
-| `agent-team`                       | Knowledge: full agent graph, invocation chains, who calls whom                       |
-| `laws-of-ux`                       | Knowledge: 10 UX laws with application guidance                                      |
-| `react-ts-standards`               | Knowledge: enforced React + TypeScript patterns                                      |
-| `design-taste-frontend`            | Knowledge: anti-slop frontend design for landing/portfolio/marketing (vendored, MIT) |
-| `animation-micro-interaction-pack` | Knowledge: motion presets and micro-interaction patterns (vendored, MIT)             |
+| Skill                              | What                                                                                     |
+| ---------------------------------- | ---------------------------------------------------------------------------------------- |
+| `review`                           | /review — drain queue: code-reviewer → bug-fixer → test-writer → judge                   |
+| `research`                         | /research — invoke researcher for knowledge gaps                                         |
+| `audit-ux`                         | /audit-ux — UX + WCAG AA audit of a component, page, or flow                             |
+| `workflow`                         | /workflow — invoke any named workflow in .claude/workflows/                              |
+| `session-log`                      | /session-log — analyze session JSONL logs for cost, agents, patterns                     |
+| `feedback`                         | /feedback — record a correction for a specific agent                                     |
+| `init`                             | /init — conversational setup/update wizard                                               |
+| `agent-team`                       | Knowledge: full agent graph, invocation chains, who calls whom                           |
+| `laws-of-ux`                       | Knowledge: 10 UX laws with application guidance                                          |
+| `react-ts-standards`               | Knowledge: enforced React + TypeScript patterns                                          |
+| `taste-skill`                      | Knowledge: anti-slop frontend design for landing/portfolio/marketing (vendored, MIT)     |
+| `animation-micro-interaction-pack` | Knowledge: motion presets and micro-interaction patterns (vendored, MIT)                 |
+| `owasp-security`                   | Knowledge: OWASP Top 10 2025, API Top 10, ASVS 5.0, LLM Top 10 — detection + enforcement |
 
 ## Hooks (`.claude/hooks/`)
 
@@ -68,6 +69,7 @@
 | `prompt-logger.sh`           | UserPromptSubmit         | Logs prompt char count to session JSONL                                |
 | `guard-dangerous-bash.sh`    | PreToolUse (Bash)        | Blocks rm -r, SQL DROP/TRUNCATE, curl\|sh, push to main — fails closed |
 | `format-and-test.sh`         | PostToolUse (Write/Edit) | Prettier-formats saved file, runs sibling test file                    |
+| `security-check.sh`          | PostToolUse (Write/Edit) | Deterministic OWASP regex scan of saved file — warns via context       |
 | `trigger-code-review.sh`     | PostToolUse (Write/Edit) | Queues source files into .review-queue.txt + meta JSONL                |
 | `prompt-reference-update.sh` | PostToolUse (Write)      | Prompts Claude to index new files in REFERENCE.md                      |
 | `suggest-doc-update.sh`      | PostToolUse (Write/Edit) | Reminds to invoke doc-updater when route/API/schema files change       |
