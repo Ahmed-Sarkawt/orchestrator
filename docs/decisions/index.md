@@ -6,4 +6,3 @@
 
 | Date | Decision | Status | File |
 | ---- | -------- | ------ | ---- |
-| 2026-07-29 | Vendor jakubkrehel/skills better-* interface pack | Active | [2026-07-29_vendor-better-skills.md](2026-07-29_vendor-better-skills.md) |
