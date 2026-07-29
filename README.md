@@ -158,21 +158,28 @@ Every session produces `.claude/logs/sessions/<id>.jsonl` with events: prompts, 
 
 Slash commands and on-demand knowledge, one directory each in `.claude/skills/`:
 
-| Skill                              | Type      | What                                                                      |
-| ---------------------------------- | --------- | ------------------------------------------------------------------------- |
-| `review`                           | command   | `/review` — the quality pipeline described above                          |
-| `research`                         | command   | `/research` — invoke the researcher                                       |
-| `audit-ux`                         | command   | `/audit-ux` — UX Laws + WCAG AA audit                                     |
-| `workflow`                         | command   | `/workflow <name>` — run a deterministic multi-agent workflow             |
-| `session-log`                      | command   | `/session-log` — analyze session logs                                     |
-| `feedback`                         | command   | `/feedback` — record a permanent correction for an agent                  |
-| `init`                             | command   | `/init` — conversational setup wizard                                     |
-| `owasp-security`                   | knowledge | OWASP Top 10 2025 + API Top 10 + ASVS 5.0 + LLM Top 10, TS/Node signals   |
-| `taste-skill`                      | knowledge | Anti-slop frontend design for landing/portfolio/marketing (vendored, MIT) |
-| `animation-micro-interaction-pack` | knowledge | Motion presets and micro-interaction patterns (vendored, MIT)             |
-| `laws-of-ux`                       | knowledge | 13 UX laws with application guidance + pitfalls checklist                 |
-| `react-ts-standards`               | knowledge | Enforced React + TypeScript patterns                                      |
-| `agent-team`                       | knowledge | The full agent graph — who invokes whom                                   |
+| Skill                              | Type      | What                                                                                 |
+| ---------------------------------- | --------- | ------------------------------------------------------------------------------------ |
+| `review`                           | command   | `/review` — the quality pipeline described above                                     |
+| `research`                         | command   | `/research` — invoke the researcher                                                  |
+| `audit-ux`                         | command   | `/audit-ux` — UX Laws + WCAG AA audit                                                |
+| `workflow`                         | command   | `/workflow <name>` — run a deterministic multi-agent workflow                        |
+| `session-log`                      | command   | `/session-log` — analyze session logs                                                |
+| `feedback`                         | command   | `/feedback` — record a permanent correction for an agent                             |
+| `init`                             | command   | `/init` — conversational setup wizard                                                |
+| `owasp-security`                   | knowledge | OWASP Top 10 2025 + API Top 10 + ASVS 5.0 + LLM Top 10, TS/Node signals              |
+| `taste-skill`                      | knowledge | Anti-slop frontend design for landing/portfolio/marketing (vendored, MIT)            |
+| `animation-micro-interaction-pack` | knowledge | Motion presets and micro-interaction patterns (vendored, MIT)                        |
+| `laws-of-ux`                       | knowledge | 13 UX laws with application guidance + pitfalls checklist                            |
+| `react-ts-standards`               | knowledge | Enforced React + TypeScript patterns                                                 |
+| `agent-team`                       | knowledge | The full agent graph — who invokes whom                                              |
+| `better-interface`                 | knowledge | Cross-discipline interface review — coordinates the six skills below (vendored, MIT) |
+| `better-ui`                        | knowledge | UI polish: surfaces, animations, icons, performance (vendored, MIT)                  |
+| `better-accessibility`             | knowledge | Focus, keyboard, ARIA, forms, screen readers (vendored, MIT)                         |
+| `better-layout`                    | knowledge | Grouping, alignment, spacing, breakpoints, RTL (vendored, MIT)                       |
+| `better-typography`                | knowledge | Fonts, type scale, wrapping, variable fonts (vendored, MIT)                          |
+| `better-colors`                    | knowledge | OKLCH color, palettes, contrast, theming (vendored, MIT)                             |
+| `better-writing`                   | knowledge | Product copy: labels, errors, empty states (vendored, MIT)                           |
 
 ---
 

@@ -60,6 +60,13 @@
 | `taste-skill`                      | Knowledge: anti-slop frontend design for landing/portfolio/marketing (vendored, MIT)     |
 | `animation-micro-interaction-pack` | Knowledge: motion presets and micro-interaction patterns (vendored, MIT)                 |
 | `owasp-security`                   | Knowledge: OWASP Top 10 2025, API Top 10, ASVS 5.0, LLM Top 10 — detection + enforcement |
+| `better-ui`                        | Knowledge: UI polish — surfaces, animations, icons, perf (vendored, MIT)                 |
+| `better-accessibility`             | Knowledge: focus, keyboard, ARIA, forms, screen readers (vendored, MIT)                  |
+| `better-colors`                    | Knowledge: OKLCH color, palettes, contrast, theming (vendored, MIT)                      |
+| `better-layout`                    | Knowledge: grouping, alignment, spacing, breakpoints (vendored, MIT)                     |
+| `better-typography`                | Knowledge: fonts, spacing, wrapping, variable fonts (vendored, MIT)                      |
+| `better-interface`                 | Knowledge: interface design principles (vendored, MIT)                                   |
+| `better-writing`                   | Knowledge: product copy — labels, errors, empty states (vendored, MIT)                   |
 
 ## Hooks (`.claude/hooks/`)
 
