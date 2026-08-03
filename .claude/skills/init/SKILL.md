@@ -22,6 +22,18 @@ You are running the setup wizard for this claude-boilerplate project. Ask each q
 
 This makes `/init` work as both a first-time setup wizard and an update command — the user only needs to answer the questions where they want to change something.
 
+4. **Git connection check (do this before anything else).** Run:
+
+   ```bash
+   git remote get-url origin 2>/dev/null
+   ```
+
+   If the URL matches the boilerplate's own repo (`github.com/Ahmed-Sarkawt/orchestrator` or `.../claude-boilerplate`), this folder is still connected to the boilerplate — commits and pushes would land in the boilerplate repo, which must never happen for a real project. Tell the user, then ask: "Detach this project from the boilerplate repo? Git stays local; only the remote link is removed. Answer no ONLY if you are developing the boilerplate itself. (yes/no — default: yes)"
+
+   If **yes** (default): run `git remote remove origin`, then ask: "Also start a fresh git history? Discards the boilerplate's commits — say no if you already made commits of your own. (yes/no — default: no)". If yes AND `.git` is a normal directory (not a worktree — check `git rev-parse --git-common-dir` returns `.git`): `rm -rf .git && git init`. Finish by telling the user: "Add your own remote later with: git remote add origin <your-repo-url>".
+
+   If **no**: skip — boilerplate development mode.
+
 ---
 
 ## Step 1 — Project identity

@@ -11,7 +11,8 @@
 #     --push-strategy branch --model-tier balanced \
 #     --format-on-save yes --session-logs yes \
 #     --commit-signing no --branch-prefix feat \
-#     --review-sensitivity strict --agent-teams no --research-log no
+#     --review-sensitivity strict --agent-teams no --research-log no \
+#     --detach-git yes --fresh-git no
 #
 # Inspect current config:
 #   bash setup.sh --print-config
@@ -51,6 +52,11 @@ EXTRA_RULES=""
 NON_INTERACTIVE=false
 DRY_RUN=false
 PRINT_CONFIG=false
+DETACH_GIT="yes"
+FRESH_GIT=false
+# Remotes matching this pattern are the boilerplate's own repo — a new project
+# must never push there. Detected and detached during setup.
+BOILERPLATE_ORIGIN_PATTERN='github\.com[:/]Ahmed-Sarkawt/(orchestrator|claude-boilerplate)'
 
 # ── Flag parsing ───────────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
@@ -71,6 +77,8 @@ while [[ $# -gt 0 ]]; do
     --review-sensitivity) REVIEW_SENSITIVITY="$2";                            shift 2 ;;
     --agent-teams)        [[ "$2" == "yes" ]] && AGENT_TEAMS=true;            shift 2 ;;
     --research-log)       [[ "$2" == "yes" ]] && RESEARCH_LOG=true;           shift 2 ;;
+    --detach-git)         DETACH_GIT="$2";                                    shift 2 ;;
+    --fresh-git)          [[ "$2" == "yes" ]] && FRESH_GIT=true;              shift 2 ;;
     --extra-rules)        EXTRA_RULES="$2";                                   shift 2 ;;
     --dry-run)            DRY_RUN=true;                                       shift ;;
     --print-config)       PRINT_CONFIG=true;                                  shift ;;
@@ -239,6 +247,30 @@ fi
 if [[ "$MISSING_DEPS" == true ]]; then
   echo -e "\n${RED}Install missing dependencies before using this boilerplate.${RESET}"
   echo "Setup will still write config files — hooks degrade gracefully until fixed."
+fi
+
+# ── 0. Git connection check (every mode) ─────────────────────────────────────
+# A new project cloned/copied from the boilerplate must not stay connected to
+# the boilerplate's GitHub repo — otherwise commits and pushes land there.
+ORIGIN_URL=$(git remote get-url origin 2>/dev/null || echo "")
+IS_BOILERPLATE_ORIGIN=false
+if [[ -n "$ORIGIN_URL" ]] && echo "$ORIGIN_URL" | grep -qE "$BOILERPLATE_ORIGIN_PATTERN"; then
+  IS_BOILERPLATE_ORIGIN=true
+fi
+
+if [[ "$IS_BOILERPLATE_ORIGIN" == true ]]; then
+  section "0. Git connection"
+  echo -e "${YELLOW}This folder's git origin points at the boilerplate repo:${RESET}"
+  echo -e "  ${DIM}${ORIGIN_URL}${RESET}"
+  echo "A new project must not push there. Setup will detach it (git stays, remote is removed)."
+  if [[ "$NON_INTERACTIVE" == false ]]; then
+    DETACH_ANSWER=$(ask "Detach from the boilerplate repo? Answer no ONLY if you are developing the boilerplate itself (yes/no)" "yes")
+    DETACH_ANSWER=$(echo "$DETACH_ANSWER" | tr '[:upper:]' '[:lower:]')
+    [[ "$DETACH_ANSWER" == "no" || "$DETACH_ANSWER" == "n" ]] && DETACH_GIT="no"
+    if [[ "$DETACH_GIT" != "no" ]] && confirm "Also start a fresh git history? Discards the boilerplate's commit history — say no if you already made your own commits"; then
+      FRESH_GIT=true
+    fi
+  fi
 fi
 
 # ── 1. Project basics (every mode) ────────────────────────────────────────────
@@ -522,6 +554,31 @@ if [[ "$AGENT_TEAMS" == true ]]; then
   fi
 fi
 
+# Git detachment — cut the cord to the boilerplate repo
+if [[ "$IS_BOILERPLATE_ORIGIN" == true && "$DETACH_GIT" != "no" ]]; then
+  if [[ "$DRY_RUN" == true ]]; then
+    dr "Remove origin remote (${ORIGIN_URL}) — project keeps local git, loses boilerplate connection"
+    [[ "$FRESH_GIT" == true ]] && dr "Start fresh git history (discard boilerplate commits, git init anew)"
+  else
+    git remote remove origin
+    ok "Detached from boilerplate repo — origin removed, local git kept"
+    if [[ "$FRESH_GIT" == true ]]; then
+      GIT_COMMON_DIR=$(git rev-parse --git-common-dir 2>/dev/null || echo ".git")
+      if [[ "$GIT_COMMON_DIR" == ".git" && -d ".git" ]]; then
+        rm -rf .git
+        git init -q
+        ok "Fresh git history started"
+      else
+        echo -e "  ${YELLOW}Skipped fresh history: this looks like a git worktree — run setup from the main checkout instead.${RESET}"
+      fi
+    fi
+    echo -e "  ${DIM}Add your own remote later: git remote add origin <your-repo-url>${RESET}"
+  fi
+elif [[ -n "$ORIGIN_URL" ]]; then
+  [[ "$DRY_RUN" == true ]] && dr "Origin is your own remote (${ORIGIN_URL}) — kept" \
+                             || ok "Origin is your own remote — kept"
+fi
+
 # Docs tracking — decisions always committed; research logs opt-in.
 # The boilerplate repo ships with both patterns gitignored (its own dev history
 # stays local); a real project needs its decision records in the repo.
@@ -651,6 +708,9 @@ echo -e "Review:           ${REVIEW_SENSITIVITY}"
 echo -e "Agent Teams:      $([ "$AGENT_TEAMS" = true ] && echo 'enabled' || echo 'disabled')"
 echo -e "Decisions in git: always"
 echo -e "Research in git:  $([ "$RESEARCH_LOG" = true ] && echo 'committed' || echo 'local-only')"
+if [[ "$IS_BOILERPLATE_ORIGIN" == true ]]; then
+  echo -e "Git remote:       $([ "$DETACH_GIT" != "no" ] && echo 'detached from boilerplate — add your own with: git remote add origin <url>' || echo 'kept (boilerplate development mode)')"
+fi
 
 if [[ "$DRY_RUN" == false ]]; then
   echo ""

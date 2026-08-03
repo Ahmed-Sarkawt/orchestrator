@@ -34,13 +34,25 @@ Both paths read and write `.claude/setup-config.json`, so switching between them
 
 ## Quick start (5 minutes)
 
-**1. Run setup**
+**1. Get the boilerplate into your project folder**
+
+```bash
+git clone https://github.com/Ahmed-Sarkawt/orchestrator.git my-app && cd my-app
+```
+
+**2. Run setup**
 
 ```bash
 bash setup.sh
 ```
 
-**2. Verify hooks work**
+Setup detects that the folder is still connected to the boilerplate's GitHub repo and **detaches it automatically** — git stays, the remote link is removed, so nothing you build ever pushes to the boilerplate. It also offers a fresh git history. Connect your own repo afterwards:
+
+```bash
+git remote add origin <your-repo-url>
+```
+
+**3. Verify hooks work**
 
 ```bash
 bash .claude/tests/run-tests.sh
@@ -48,14 +60,14 @@ bash .claude/tests/run-tests.sh
 
 All tests should pass before your first session.
 
-**3. Commit**
+**4. Commit**
 
 ```bash
 git add .claude/ CLAUDE.md REFERENCE.md docs/ .gitignore
 git commit -m "chore: add Claude Code configuration"
 ```
 
-**4. Open Claude Code**
+**5. Open Claude Code**
 
 ```bash
 claude
