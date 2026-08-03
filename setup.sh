@@ -56,7 +56,7 @@ DETACH_GIT="yes"
 FRESH_GIT=false
 # Remotes matching this pattern are the boilerplate's own repo — a new project
 # must never push there. Detected and detached during setup.
-BOILERPLATE_ORIGIN_PATTERN='github\.com[:/]Ahmed-Sarkawt/(orchestrator|claude-boilerplate)'
+BOILERPLATE_ORIGIN_PATTERN='github\.com[:/](itssulaimann|Ahmed-Sarkawt)/(orchestrator|claude-boilerplate)'
 
 # ── Flag parsing ───────────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do

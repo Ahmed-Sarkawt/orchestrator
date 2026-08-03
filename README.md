@@ -37,7 +37,7 @@ Both paths read and write `.claude/setup-config.json`, so switching between them
 **1. Get the boilerplate into your project folder**
 
 ```bash
-git clone https://github.com/Ahmed-Sarkawt/orchestrator.git my-app && cd my-app
+git clone https://github.com/itssulaimann/orchestrator.git my-app && cd my-app
 ```
 
 **2. Run setup**
